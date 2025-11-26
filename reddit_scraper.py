@@ -7,6 +7,7 @@ the content in a ZIP file with JSON format. The JSON hierarchy is:
 subreddit -> post -> comments, with user information for posts and comments.
 """
 
+import argparse
 import json
 import os
 import time
@@ -20,9 +21,9 @@ import requests
 class PushshiftRedditScraper:
     """Scrapes historical Reddit data using the Pushshift API."""
 
-    # Pushshift API base URLs
-    PUSHSHIFT_SUBMISSIONS_URL = "https://api.pushshift.io/reddit/search/submission"
-    PUSHSHIFT_COMMENTS_URL = "https://api.pushshift.io/reddit/search/comment"
+    # Pushshift API base URLs (using Pullpush.io which maintains Pushshift-compatible endpoints)
+    PUSHSHIFT_SUBMISSIONS_URL = "https://api.pullpush.io/reddit/search/submission"
+    PUSHSHIFT_COMMENTS_URL = "https://api.pullpush.io/reddit/search/comment"
 
     def __init__(self, rate_limit_delay: float = 1.0):
         """
@@ -300,8 +301,8 @@ class PushshiftRedditScraper:
 
         # Create directory if it doesn't exist
         output_dir = os.path.dirname(output_path)
-        if output_dir and not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
 
         json_filename = os.path.basename(output_path).replace('.zip', '.json')
 
@@ -315,7 +316,6 @@ class PushshiftRedditScraper:
 
 def main():
     """Main function to demonstrate the scraper usage."""
-    import argparse
 
     parser = argparse.ArgumentParser(
         description="Scrape historical Reddit data using Pushshift API"
